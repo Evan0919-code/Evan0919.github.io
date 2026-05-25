@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cerrando sesión...</title>
+</head>
+<body>
+    <script>
+        // Redirigir a logout via app.js
+        localStorage.removeItem('usuarioActivo');
+        window.location.href = 'index.html';
+    </script>
+    <p>Cerrando sesión...</p>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cursos - Depo Xona</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { 
+            background: linear-gradient(135deg, #FFFFFF 0%, #FFA500 50%, #FFFFFF 100%);
+            min-height: 100vh;
+        }
+
+        .navbar.navbar-dark.bg-primary { 
+            background: linear-gradient(135deg, #FFA500 0%, #DDA0DD 100%) !important;
+        }
+
+        .card { 
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(221, 160, 221, 0.2);
+        }
+
+        .btn-primary { 
+            background: linear-gradient(135deg, #FFA500 0%, #FFD700 100%) !important;
+            border: none;
+        }
+
+        .btn-primary:hover { 
+            background: linear-gradient(135deg, #E69500 0%, #DDA0DD 100%) !important;
+        }
+
+        .form-control:focus { 
+            border-color: #DDA0DD;
+            box-shadow: 0 0 0 0.2rem rgba(221, 160, 221, 0.25);
+        }
+
+        footer {
+            background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+            color: white;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .detail-section {
+            display: none;
+        }
+
+        .detail-section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">
+                <i class="bi bi-house-fill"></i> Depo Xona
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cursos.html">Cursos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="eventos.html">Eventos</a>
+                    </li>
+                    <li class="nav-item" id="inscripcion-nav" style="display:none;">
+                        <a class="nav-link" href="inscripcion.html">Mis Inscripciones</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="auth-link" href="login_usuario.html">Login</a>
+                    </li>
+                    <li class="nav-item" id="logout-nav" style="display:none;">
+                        <a class="nav-link" href="#" onclick="logout()">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+        <!-- Lista de Cursos -->
+        <div id="listSection">
+            <h1 class="mb-4" style="color: #6b4a7f;"><i class="bi bi-book"></i> Nuestros Cursos</h1>
+            <div id="cursosContainer" class="row">
+                <!-- Cargado por JavaScript -->
+            </div>
+        </div>
+
+        <!-- Detalle de Curso -->
+        <div id="detailSection" class="detail-section">
+            <a href="#" onclick="backToCursos()" class="btn btn-light mb-3"><i class="bi bi-arrow-left"></i> Volver</a>
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h2 id="cursoNombre" style="color: #6b4a7f;"></h2>
+                            <p id="cursoDescripcion" class="text-secondary"></p>
+                            
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <h5>Requisitos</h5>
+                                    <p id="cursoRequisitos">-</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5>Información</h5>
+                                    <p><strong>ID:</strong> <span id="cursoId"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Inscribirse</h5>
+                            <div id="inscripcionForm">
+                                <button class="btn btn-primary w-100" onclick="inscribirse()">
+                                    <i class="bi bi-check-circle"></i> Inscribirse
+                                </button>
+                                <div id="mensajeInscripcion" class="alert mt-3" style="display:none;"></div>
+                            </div>
+                            <div id="noAuth" class="alert alert-warning" style="display:none;">
+                                Debes <a href="login_usuario.html">iniciar sesión</a> para inscribirse.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center mt-5">
+        <div class="container">
+            <p>&copy; 2024 Depo Xona. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script>
+    <script>
+        let currentCursoId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+            
+            if (id) {
+                showCursoDetail(id);
+            } else {
+                loadCursosList();
+            }
+        });
+
+        function loadCursosList() {
+            document.getElementById('listSection').style.display = 'block';
+            document.getElementById('detailSection').style.display = 'none';
+            
+            const cursos = getDataCursos();
+            const container = document.getElementById('cursosContainer');
+            container.innerHTML = '';
+
+            cursos.forEach(curso => {
+                container.innerHTML += `
+                    <div class="col-md-4 mb-4">
+                        <div class="card" onclick="showCursoDetail(${curso.id})" style="cursor: pointer;">
+                            <div class="card-body">
+                                <h5 class="card-title">${curso.nombre}</h5>
+                                <p class="card-text">${curso.descripcion || 'Curso disponible'}</p>
+                                <button class="btn btn-primary" onclick="event.stopPropagation(); showCursoDetail(${curso.id})">Ver Detalles</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function showCursoDetail(id) {
+            const curso = getDataCursos().find(c => c.id == id);
+            if (!curso) return;
+
+            document.getElementById('listSection').style.display = 'none';
+            document.getElementById('detailSection').classList.add('active');
+
+            currentCursoId = id;
+            document.getElementById('cursoId').textContent = curso.id;
+            document.getElementById('cursoNombre').textContent = curso.nombre;
+            document.getElementById('cursoDescripcion').textContent = curso.descripcion || 'Curso disponible';
+            document.getElementById('cursoRequisitos').textContent = curso.requisitos || 'Ninguno';
+
+            updateInscripcionUI();
+            window.history.pushState(null, '', `cursos.html?id=${id}`);
+        }
+
+        function backToCursos() {
+            document.getElementById('detailSection').classList.remove('active');
+            document.getElementById('listSection').style.display = 'block';
+            window.history.pushState(null, '', 'cursos.html');
+        }
+
+        function inscribirse() {
+            const usuario = getUsuario();
+            if (!usuario) {
+                window.location.href = 'login_usuario.html';
+                return;
+            }
+
+            const inscripcion = {
+                id: Date.now(),
+                id_curso: currentCursoId,
+                id_usuario: usuario.id,
+                creado_en: new Date().toLocaleString()
+            };
+
+            addInscripcion(inscripcion);
+            updateInscripcionUI();
+
+            const msg = document.getElementById('mensajeInscripcion');
+            msg.className = 'alert alert-success mt-3';
+            msg.textContent = '✓ Inscripción guardada. Gracias.';
+            msg.style.display = 'block';
+
+            setTimeout(() => {
+                msg.style.display = 'none';
+            }, 3000);
+        }
+
+        function updateInscripcionUI() {
+            const usuario = getUsuario();
+            const form = document.getElementById('inscripcionForm');
+            const noAuth = document.getElementById('noAuth');
+
+            if (!usuario) {
+                form.style.display = 'none';
+                noAuth.style.display = 'block';
+                return;
+            }
+
+            form.style.display = 'block';
+            noAuth.style.display = 'none';
+
+            const inscripciones = getInscripciones();
+            const yaInscrito = inscripciones.some(i => i.id_curso == currentCursoId && i.id_usuario == usuario.id);
+            
+            const btn = form.querySelector('button');
+            if (yaInscrito) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="bi bi-check-circle"></i> Ya inscrito';
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-check-circle"></i> Inscribirse';
+            }
+        }
+    </script>
+</body>
+</html>

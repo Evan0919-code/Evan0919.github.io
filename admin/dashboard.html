@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Dashboard - Depo Xona</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #FFFFFF 0%, #FFA500 50%, #FFFFFF 100%);
+            min-height: 100vh;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: linear-gradient(135deg, #FFA500 0%, #DDA0DD 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            background: linear-gradient(135deg, #f8f9fa 0%, #FFF8E1 100%);
+            min-height: calc(100vh - 70px);
+            padding: 20px 0;
+            border-right: 1px solid #DDA0DD;
+        }
+
+        .nav-link {
+            color: #6b4a7f;
+            padding: 12px 20px;
+            margin: 5px 0;
+            border-left: 4px solid transparent;
+            transition: 0.3s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: #FFA500;
+            color: white;
+            border-left-color: #FFD700;
+        }
+
+        /* CONTENT */
+        .main-content {
+            padding: 30px;
+        }
+
+        /* CARDS */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(221, 160, 221, 0.2);
+            transition: 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(221, 160, 221, 0.3);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #FFA500 0%, #FFD700 100%);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        /* STAT CARDS */
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(221, 160, 221, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #FFA500;
+        }
+
+        .stat-label {
+            color: #6b4a7f;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* BOTONES */
+        .btn-primary {
+            background: linear-gradient(135deg, #FFA500 0%, #FFD700 100%) !important;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #E69500 0%, #DDA0DD 100%) !important;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #DDA0DD 0%, #FFA500 100%);
+            border: none;
+        }
+
+        /* TABLES */
+        .table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table thead {
+            background: linear-gradient(135deg, #FFA500 0%, #DDA0DD 100%);
+            color: white;
+        }
+
+        .table tbody tr:hover {
+            background-color: #FFF8E1;
+        }
+
+        /* MODAL */
+        .modal-content {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 8px 30px rgba(221, 160, 221, 0.3);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #FFA500 0%, #FFD700 100%);
+            color: white;
+            border: none;
+        }
+
+        /* SECTIONS */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .page-header {
+            color: #6b4a7f;
+            font-weight: 700;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="dashboard.html">
+                <i class="bi bi-gear-fill"></i> Depo Xona Admin
+            </a>
+            <div class="d-flex align-items-center">
+                <span class="text-white me-3"><i class="bi bi-person"></i> <span id="adminName">Admin</span></span>
+                <button class="btn btn-light btn-sm" onclick="logoutAdmin()">
+                    <i class="bi bi-box-arrow-right"></i> Salir
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- SIDEBAR -->
+            <nav class="col-md-2 sidebar">
+                <div class="nav flex-column">
+                    <a href="#" onclick="showSection('dashboard')" class="nav-link active">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                    <a href="#" onclick="showSection('usuarios')" class="nav-link">
+                        <i class="bi bi-people"></i> Usuarios
+                    </a>
+                    <a href="#" onclick="showSection('cursos')" class="nav-link">
+                        <i class="bi bi-book"></i> Cursos
+                    </a>
+                    <a href="#" onclick="showSection('eventos')" class="nav-link">
+                        <i class="bi bi-calendar-event"></i> Eventos
+                    </a>
+                    <a href="#" onclick="showSection('inscripciones')" class="nav-link">
+                        <i class="bi bi-person-check"></i> Inscripciones
+                    </a>
+                    <hr>
+                    <a href="../index.html" class="nav-link">
+                        <i class="bi bi-house-fill"></i> Volver al Inicio
+                    </a>
+                </div>
+            </nav>
+
+            <!-- MAIN CONTENT -->
+            <main class="col-md-10 main-content">
+                <!-- DASHBOARD -->
+                <section id="dashboard" class="section active">
+                    <h1 class="page-header"><i class="bi bi-speedometer2"></i> Dashboard</h1>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-number" id="statUsuarios">0</div>
+                                <div class="stat-label">Usuarios</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-number" id="statCursos">0</div>
+                                <div class="stat-label">Cursos</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-number" id="statEventos">0</div>
+                                <div class="stat-label">Eventos</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-number" id="statInscripciones">0</div>
+                                <div class="stat-label">Inscripciones</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-graph-up"></i> Resumen General</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted">Bienvenido al panel de administración de Depo Xona</p>
+                            <p>Desde aquí puedes gestionar todos los aspectos de la plataforma: usuarios, cursos, eventos e inscripciones.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- USUARIOS -->
+                <section id="usuarios" class="section">
+                    <h1 class="page-header"><i class="bi bi-people"></i> Gestión de Usuarios</h1>
+                    
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Usuarios Registrados</h5>
+                            <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#modalUsuario">
+                                <i class="bi bi-person-plus"></i> Nuevo Usuario
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nombre</th>
+                                            <th>Teléfono</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="usuariosTable">
+                                        <!-- Cargado por JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CURSOS -->
+                <section id="cursos" class="section">
+                    <h1 class="page-header"><i class="bi bi-book"></i> Gestión de Cursos</h1>
+                    
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Cursos Disponibles</h5>
+                            <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#modalCurso">
+                                <i class="bi bi-plus"></i> Nuevo Curso
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nombre</th>
+                                            <th>Descripción</th>
+                                            <th>Costo</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="cursosTable">
+                                        <!-- Cargado por JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- EVENTOS -->
+                <section id="eventos" class="section">
+                    <h1 class="page-header"><i class="bi bi-calendar-event"></i> Gestión de Eventos</h1>
+                    
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Eventos Disponibles</h5>
+                            <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#modalEvento">
+                                <i class="bi bi-plus"></i> Nuevo Evento
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nombre</th>
+                                            <th>Curso</th>
+                                            <th>Descripción</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="eventosTable">
+                                        <!-- Cargado por JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- INSCRIPCIONES -->
+                <section id="inscripciones" class="section">
+                    <h1 class="page-header"><i class="bi bi-person-check"></i> Inscripciones</h1>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Todas las Inscripciones</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Usuario</th>
+                                            <th>Curso/Evento</th>
+                                            <th>Fecha</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="inscripcionesTable">
+                                        <!-- Cargado por JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <!-- Modal Usuario -->
+    <div class="modal fade" id="modalUsuario" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-plus"></i> Nuevo Usuario</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="formUsuario" onsubmit="handleSaveUsuario(event)">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" class="form-control" name="nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Teléfono</label>
+                            <input type="tel" class="form-control" name="telefono" required placeholder="10 dígitos">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script>
+    <script src="../public/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const admin = getAdmin();
+            if (!admin) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            document.getElementById('adminName').textContent = admin.usuario;
+            loadDashboardData();
+            loadUsuarios();
+            loadCursos();
+            loadEventos();
+            loadInscripciones();
+        });
+
+        function showSection(section) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(section).classList.add('active');
+            
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            event.target.closest('.nav-link').classList.add('active');
+
+            // Recargar datos de la sección
+            if (section === 'usuarios') loadUsuarios();
+            else if (section === 'cursos') loadCursos();
+            else if (section === 'eventos') loadEventos();
+            else if (section === 'inscripciones') loadInscripciones();
+            else if (section === 'dashboard') loadDashboardData();
+        }
+
+        function loadDashboardData() {
+            const usuarios = getDataUsuarios();
+            const cursos = getDataCursos();
+            const eventos = getDataEventos();
+            const inscripciones = getInscripciones();
+
+            document.getElementById('statUsuarios').textContent = usuarios.length;
+            document.getElementById('statCursos').textContent = cursos.length;
+            document.getElementById('statEventos').textContent = eventos.length;
+            document.getElementById('statInscripciones').textContent = inscripciones.length;
+        }
+
+        function loadUsuarios() {
+            const usuarios = getDataUsuarios();
+            const tbody = document.getElementById('usuariosTable');
+            tbody.innerHTML = usuarios.map(u => `
+                <tr>
+                    <td><strong>${u.id}</strong></td>
+                    <td>${u.nombre}</td>
+                    <td>${u.telefono}</td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" onclick="deleteUsuario(${u.id})">
+                            <i class="bi bi-trash"></i> Eliminar
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadCursos() {
+            const cursos = getDataCursos();
+            const tbody = document.getElementById('cursosTable');
+            tbody.innerHTML = cursos.map(c => `
+                <tr>
+                    <td><strong>${c.id}</strong></td>
+                    <td>${c.nombre}</td>
+                    <td>${c.descripcion || '-'}</td>
+                    <td>$${c.costo || '0'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info">Editar</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteCurso(${c.id})">Eliminar</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadEventos() {
+            const eventos = getDataEventos();
+            const tbody = document.getElementById('eventosTable');
+            tbody.innerHTML = eventos.map(e => `
+                <tr>
+                    <td><strong>${e.id}</strong></td>
+                    <td>${e.nombre}</td>
+                    <td>${e.curso}</td>
+                    <td>${e.descripcion || '-'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info">Editar</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteEvento(${e.id})">Eliminar</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadInscripciones() {
+            const inscripciones = getInscripciones();
+            const usuarios = getDataUsuarios();
+            const cursos = getDataCursos();
+            const eventos = getDataEventos();
+            
+            const tbody = document.getElementById('inscripcionesTable');
+            tbody.innerHTML = inscripciones.map(i => {
+                const usuario = usuarios.find(u => u.id === i.id_usuario);
+                const curso = cursos.find(c => c.id === i.id_curso);
+                const evento = eventos.find(e => e.id === i.id_evento);
+                const nombre = curso?.nombre || evento?.nombre || 'N/A';
+
+                return `
+                    <tr>
+                        <td><strong>${i.id}</strong></td>
+                        <td>${usuario?.nombre || 'Usuario eliminado'}</td>
+                        <td>${nombre}</td>
+                        <td>${i.creado_en}</td>
+                        <td>
+                            <button class="btn btn-sm btn-danger" onclick="deleteInscripcion(${i.id})">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function deleteUsuario(id) {
+            if (confirm('¿Eliminar este usuario?')) {
+                removeUsuario(id);
+                loadUsuarios();
+                loadDashboardData();
+            }
+        }
+
+        function deleteInscripcion(id) {
+            if (confirm('¿Eliminar esta inscripción?')) {
+                removeInscripcion(id);
+                loadInscripciones();
+                loadDashboardData();
+            }
+        }
+
+        function handleSaveUsuario(event) {
+            event.preventDefault();
+            const form = event.target;
+            const nombre = form.nombre.value.trim();
+            const telefono = form.telefono.value.trim();
+
+            const nuevoUsuario = {
+                id: Date.now(),
+                nombre: nombre,
+                telefono: telefono
+            };
+
+            addUsuario(nuevoUsuario);
+            form.reset();
+            bootstrap.Modal.getInstance(document.getElementById('modalUsuario')).hide();
+            loadUsuarios();
+            loadDashboardData();
+        }
+
+        function logoutAdmin() {
+            localStorage.removeItem('adminActivo');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

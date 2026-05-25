@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Eventos - Depo Xona</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { 
+            background: linear-gradient(135deg, #FFFFFF 0%, #FFA500 50%, #FFFFFF 100%);
+            min-height: 100vh;
+        }
+
+        .navbar.navbar-dark.bg-primary { 
+            background: linear-gradient(135deg, #FFA500 0%, #DDA0DD 100%) !important;
+        }
+
+        .card { 
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(221, 160, 221, 0.2);
+        }
+
+        .btn-primary { 
+            background: linear-gradient(135deg, #FFA500 0%, #FFD700 100%) !important;
+            border: none;
+        }
+
+        .btn-primary:hover { 
+            background: linear-gradient(135deg, #E69500 0%, #DDA0DD 100%) !important;
+        }
+
+        .btn-info { 
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            border: none;
+        }
+
+        .form-control:focus { 
+            border-color: #DDA0DD;
+            box-shadow: 0 0 0 0.2rem rgba(221, 160, 221, 0.25);
+        }
+
+        footer {
+            background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+            color: white;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+
+        .detail-section {
+            display: none;
+        }
+
+        .detail-section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">
+                <i class="bi bi-house-fill"></i> Depo Xona
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cursos.html">Cursos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="eventos.html">Eventos</a>
+                    </li>
+                    <li class="nav-item" id="inscripcion-nav" style="display:none;">
+                        <a class="nav-link" href="inscripcion.html">Mis Inscripciones</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="auth-link" href="login_usuario.html">Login</a>
+                    </li>
+                    <li class="nav-item" id="logout-nav" style="display:none;">
+                        <a class="nav-link" href="#" onclick="logout()">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+        <!-- Lista de Eventos -->
+        <div id="listSection">
+            <h1 class="mb-4" style="color: #6b4a7f;"><i class="bi bi-calendar-event"></i> Nuestros Eventos</h1>
+            <div id="eventosContainer" class="row">
+                <!-- Cargado por JavaScript -->
+            </div>
+        </div>
+
+        <!-- Detalle de Evento -->
+        <div id="detailSection" class="detail-section">
+            <a href="#" onclick="backToEventos()" class="btn btn-light mb-3"><i class="bi bi-arrow-left"></i> Volver</a>
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h2 id="eventoNombre" style="color: #6b4a7f;"></h2>
+                            <p id="eventoDescripcion" class="text-secondary"></p>
+                            
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <h5>Información</h5>
+                                    <p><strong>Curso:</strong> <span id="eventoCurso">-</span></p>
+                                    <p><strong>Requisitos:</strong> <span id="eventoRequisitos">-</span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5>Detalles</h5>
+                                    <p><strong>ID:</strong> <span id="eventoId"></span></p>
+                                    <p><strong>Costo:</strong> $<span id="eventoCosto">0</span></p>
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <h5>Archivos Multimedia</h5>
+                                <div id="archivosContainer" class="row mt-3">
+                                    <p class="text-muted">No hay archivos disponibles</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Inscribirse</h5>
+                            <div id="inscripcionForm">
+                                <button class="btn btn-primary w-100" onclick="inscribirse()">
+                                    <i class="bi bi-check-circle"></i> Inscribirse
+                                </button>
+                                <div id="mensajeInscripcion" class="alert mt-3" style="display:none;"></div>
+                            </div>
+                            <div id="noAuth" class="alert alert-warning" style="display:none;">
+                                Debes <a href="login_usuario.html">iniciar sesión</a> para inscribirse.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center mt-5">
+        <div class="container">
+            <p>&copy; 2024 Depo Xona. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script>
+    <script>
+        let currentEventoId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+            
+            if (id) {
+                showEventoDetail(id);
+            } else {
+                loadEventosList();
+            }
+        });
+
+        function loadEventosList() {
+            document.getElementById('listSection').style.display = 'block';
+            document.getElementById('detailSection').style.display = 'none';
+            
+            const eventos = getDataEventos();
+            const container = document.getElementById('eventosContainer');
+            container.innerHTML = '';
+
+            eventos.forEach(evento => {
+                container.innerHTML += `
+                    <div class="col-md-4 mb-4">
+                        <div class="card" onclick="showEventoDetail(${evento.id})" style="cursor: pointer;">
+                            <div class="card-body">
+                                <h5 class="card-title">${evento.nombre}</h5>
+                                <p class="card-text">${evento.descripcion}</p>
+                                <p class="text-muted"><strong>Curso:</strong> ${evento.curso}</p>
+                                <button class="btn btn-info" onclick="event.stopPropagation(); showEventoDetail(${evento.id})">Ver Detalles</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function showEventoDetail(id) {
+            const evento = getDataEventos().find(e => e.id == id);
+            if (!evento) return;
+
+            document.getElementById('listSection').style.display = 'none';
+            document.getElementById('detailSection').classList.add('active');
+
+            currentEventoId = id;
+            document.getElementById('eventoId').textContent = evento.id;
+            document.getElementById('eventoNombre').textContent = evento.nombre;
+            document.getElementById('eventoDescripcion').textContent = evento.descripcion;
+            document.getElementById('eventoCurso').textContent = evento.curso;
+            document.getElementById('eventoRequisitos').textContent = evento.requisitos || 'Ninguno';
+            document.getElementById('eventoCosto').textContent = evento.costo || '0';
+
+            // Cargar archivos multimedia
+            const archivos = getDataArchivos().filter(a => a.id_evento == id);
+            const archivosContainer = document.getElementById('archivosContainer');
+            if (archivos.length > 0) {
+                archivosContainer.innerHTML = archivos.map(archivo => `
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="card-text"><strong>${archivo.nombre}</strong></p>
+                                <a href="${archivo.multimedia}" target="_blank" class="btn btn-sm btn-info">
+                                    <i class="bi bi-download"></i> Descargar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                archivosContainer.innerHTML = '<p class="text-muted">No hay archivos disponibles</p>';
+            }
+
+            updateInscripcionUI();
+            window.history.pushState(null, '', `eventos.html?id=${id}`);
+        }
+
+        function backToEventos() {
+            document.getElementById('detailSection').classList.remove('active');
+            document.getElementById('listSection').style.display = 'block';
+            window.history.pushState(null, '', 'eventos.html');
+        }
+
+        function inscribirse() {
+            const usuario = getUsuario();
+            if (!usuario) {
+                window.location.href = 'login_usuario.html';
+                return;
+            }
+
+            const inscripcion = {
+                id: Date.now(),
+                id_evento: currentEventoId,
+                id_usuario: usuario.id,
+                creado_en: new Date().toLocaleString()
+            };
+
+            addInscripcion(inscripcion);
+            updateInscripcionUI();
+
+            const msg = document.getElementById('mensajeInscripcion');
+            msg.className = 'alert alert-success mt-3';
+            msg.textContent = '✓ Inscripción guardada. Gracias.';
+            msg.style.display = 'block';
+
+            setTimeout(() => {
+                msg.style.display = 'none';
+            }, 3000);
+        }
+
+        function updateInscripcionUI() {
+            const usuario = getUsuario();
+            const form = document.getElementById('inscripcionForm');
+            const noAuth = document.getElementById('noAuth');
+
+            if (!usuario) {
+                form.style.display = 'none';
+                noAuth.style.display = 'block';
+                return;
+            }
+
+            form.style.display = 'block';
+            noAuth.style.display = 'none';
+
+            const inscripciones = getInscripciones();
+            const yaInscrito = inscripciones.some(i => i.id_evento == currentEventoId && i.id_usuario == usuario.id);
+            
+            const btn = form.querySelector('button');
+            if (yaInscrito) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="bi bi-check-circle"></i> Ya inscrito';
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-check-circle"></i> Inscribirse';
+            }
+        }
+    </script>
+</body>
+</html>
